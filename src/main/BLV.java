@@ -47,11 +47,12 @@ public class BLV extends JFrame {
 	 * ver3.66 ファイル名ボックスを作る。
 	 * ver3.68 CCDカメラをBLVから制御可能に。画像取得の頻度を上部の欄に入力することで指定可能。
 	 * ver3.69 あらゆる状況でCCDカメラから撮影可能に。L,D,LD,DDDDDL,NOISEで撮影時はDになり、撮影が終わると本来あるべき明るさへ。
+	 * ver3.70machineNoを消去し、グラフをひとつに
 	 */
 	private static final long serialVersionUID = -2508829707600345047L;
 	
 	//Parameter
-	public static String version = "3.69";// 2014年10月28日
+	public static String version = "3.70";// 2019年6月14日
 //	public static String curDir = getCurDir();
 //	public static String curDir = "C:\\Documents and Settings\\hito\\workspace\\PanelTest";
 	public static String curDir;
@@ -60,21 +61,21 @@ public class BLV extends JFrame {
 	
 	public JPanel panel;
 	protected GridBagConstraints constraints;	
-//	public int expno1,expno2,expno3,expno4;
+//	public int expno1;
 	GridBagLayout gridbag;
-	public CommunicatorPhotomul cp1,cp2,cp3,cp4;
+	public CommunicatorPhotomul cp1;
 	public CommunicatorT10 ct;
 	public CommunicatorKIKUSUI ck;
 	public CommunicatorArduino ar;
 	
-	public DisplayEXPNO cEXP1,cEXP2,cEXP3,cEXP4;
-	public myMeasureButton cmb1,cmb2,cmb3,cmb4;
-	public BasePlace cbase1,cbase1_1,spacer1,cbase2,cbase2_1,spacer2,cbase3,cbase3_1,spacer3,cbase4,cbase4_1,spacer4,cbase2_0,cbase3_0,cbase4_0,cbase5_0,cbase5_1,cbase5,spacer5;
-	public ChartPanel cchart1,cchart2,cchart3,cchart4,cchart5;
-	public myStopButton csb1,csb2,csb3,csb4;
-	public myPrintButton cpb1,cpb2,cpb3,cpb4;
-	public DataUpButton dub1,dub2,dub3,dub4;
-	public myButton cb1,cb2,cb3,cb4;
+	public DisplayEXPNO cEXP1;
+	public myMeasureButton cmb1;
+	public BasePlace cbase1,cbase1_1,spacer1,cbase5_0,cbase5_1,cbase5,spacer5;
+	public ChartPanel cchart1,cchart5;
+	public myStopButton csb1;
+	public myPrintButton cpb1;
+	public DataUpButton dub1;
+	public myButton cb1;
 	public MyLightButton lonb;
 	public MyLightOFFButton loffb;
 	public MyLightNoiseButton lnb;
@@ -82,8 +83,8 @@ public class BLV extends JFrame {
 	public DelayLDTimeTextBox dlttb;
 	public MyLDButton ldb;
 	public DisplayLDTime ldt;
-	public DataDownButton ddb1,ddb2,ddb3,ddb4;
-	public GoToMeasuringChart gtmc1,gtmc2,gtmc3,gtmc4;
+	public DataDownButton ddb1;
+	public GoToMeasuringChart gtmc1;
 	public SampleIntervalTimeTextBox sittb;
 	public SampleMeasureTimeTextBox smttb;
 	public FilenameTextBox ftb;
@@ -113,13 +114,10 @@ public class BLV extends JFrame {
 	public BLV(){
 		
 		osCheck();
-		setMachineNo();
+//		setMachineNo();
 		
 		//シリアルポートの準備
 		this.cp1 = new CommunicatorPhotomul(1,dataseries1);//comportを指定
-		this.cp2 = new CommunicatorPhotomul(2,dataseries2);//comportを指定
-		this.cp3 = new CommunicatorPhotomul(4,dataseries3);//comportを指定
-		this.cp4 = new CommunicatorPhotomul(5,dataseries4);//comportを指定
 		if(isWindows)this.ck = new CommunicatorKIKUSUI(8); //KIKUSUIとの接続 3は危険。
 		else this.ck = new CommunicatorKIKUSUI("/dev/cu.UC-232AC");
 		if(isWindows)this.ar = new CommunicatorArduino(5); //Arduinoとの接続、COM=5
@@ -129,9 +127,6 @@ public class BLV extends JFrame {
 		//Chartを作る。
 		setDatasets();
 		chart1 = createScatterPlot(dataset1,"Biolumi. [cnt]");
-		chart2 = createScatterPlot(dataset2,"Biolumi. [cnt]");
-		chart3 = createScatterPlot(dataset3,"Biolumi. [cnt]");
-		chart4 = createScatterPlot(dataset4,"Biolumi. [cnt]");
 		chart5 = createStepPlot(dataset5,"LED current [A]");
 		setChartPanel();
 
@@ -199,85 +194,6 @@ public class BLV extends JFrame {
 		setConstraints(panel,gridbag,spacer1,10,50,0,row+7,GridBagConstraints.REMAINDER,1);
 		row=row+8;
 		
-		//Button in Second line
-		cEXP2= new DisplayEXPNO(2);
-		cbase2_0= new BasePlace();
-		cmb2= new myMeasureButton(cEXP2,cp2,cchart2,dataseries2 ,2,sittb,smttb,this.MACHINENO,ftb);
-		cbase2 = new BasePlace();
-		csb2 = new myStopButton(cmb2,this, cp2,cchart2,dataseries2,cEXP2);
-		cb2 = new myButton(curDir+"/pic/cal.png");
-		cbase2_1 = new BasePlace();
-		spacer2 = new BasePlace();
-//		constraints.fill = GridBagConstraints.BOTH;	
-		ddb2 = new DataDownButton(chart2,dataseries2,2,cmb2,dub2);
-		dub2 = new DataUpButton(chart2,dataseries2,2,cmb2,ddb2);
-		gtmc2 = new GoToMeasuringChart(curDir+"/pic/back.png",cmb2,dataseries2,2);
-
-		setConstraints(panel,gridbag,cEXP2,0,0,0,row+0,1,1);
-		setConstraints(panel,gridbag,cbase2,10,100,GridBagConstraints.RELATIVE,row+0,1,7);
-		setConstraints(panel,gridbag,cchart2,100,50,GridBagConstraints.RELATIVE,row+0,4,7);
-		setConstraints(panel,gridbag,cmb2,0,0,0,row+1,1,1);
-		setConstraints(panel,gridbag,csb2,0,0,0,row+2,1,1);
-		setConstraints(panel,gridbag,gtmc2,0,0,0,row+3,1,1);
-		setConstraints(panel,gridbag,dub2,0,0,0,row+4,1,1);
-		setConstraints(panel,gridbag,ddb2,0,0,0,row+5,1,1);
-		setConstraints(panel,gridbag,cbase2_1,0,0,0,row+6,1,1);
-		setConstraints(panel,gridbag,spacer2,10,50,0,row+7,GridBagConstraints.REMAINDER,1);
-		row=row+8;
-		
-		
-		//Button in Third line
-		cEXP3= new DisplayEXPNO(3);
-		cbase3_0= new BasePlace();
-		cmb3= new myMeasureButton(cEXP3,cp3,cchart3,dataseries3 ,3,sittb,smttb,this.MACHINENO,ftb);
-		cbase3 = new BasePlace();
-		csb3 = new myStopButton(cmb3,this, cp3,cchart3,dataseries3,cEXP3);
-
-		cb3 = new myButton(curDir+"/pic/cal.png");
-		cbase3_1 = new BasePlace();
-		spacer3 = new BasePlace();
-//		constraints.fill = GridBagConstraints.BOTH;	
-		ddb3 = new DataDownButton(chart3,dataseries3,3,cmb3,dub3);
-		dub3 = new DataUpButton(chart3,dataseries3,3,cmb3,ddb3);
-		gtmc3 = new GoToMeasuringChart(curDir+"/pic/back.png",cmb3,dataseries3,3);
-
-		setConstraints(panel,gridbag,cEXP3,0,0,0,row+0,1,1);
-		setConstraints(panel,gridbag,cbase3,10,100,GridBagConstraints.RELATIVE,row+0,1,7);
-		setConstraints(panel,gridbag,cchart3,100,50,GridBagConstraints.RELATIVE,row+0,4,7);
-		setConstraints(panel,gridbag,cmb3,0,0,0,row+1,1,1);
-		setConstraints(panel,gridbag,csb3,0,0,0,row+2,1,1);
-		setConstraints(panel,gridbag,gtmc3,0,0,0,row+3,1,1);
-		setConstraints(panel,gridbag,dub3,0,0,0,row+4,1,1);
-		setConstraints(panel,gridbag,ddb3,0,0,0,row+5,1,1);
-		setConstraints(panel,gridbag,cbase3_1,0,0,0,row+6,1,1);
-		setConstraints(panel,gridbag,spacer3,10,50,0,row+7,GridBagConstraints.REMAINDER,1);
-		row=row+8;
-		
-		//Forth line
-		cEXP4= new DisplayEXPNO(4);
-		cbase4_0= new BasePlace();
-		cmb4= new myMeasureButton(cEXP4,cp4,cchart4,dataseries4 ,4,sittb,smttb,this.MACHINENO,ftb);
-		cbase4 = new BasePlace();
-		csb4 = new myStopButton(cmb4,this, cp4,cchart4,dataseries4,cEXP4);
-		cb4 = new myButton(curDir+"/pic/cal.png");
-		cbase4_1 = new BasePlace();
-		spacer4 = new BasePlace();
-//		constraints.fill = GridBagConstraints.BOTH;	
-		ddb4 = new DataDownButton(chart4,dataseries4,4,cmb4,dub4);
-		dub4 = new DataUpButton(chart4,dataseries4,4,cmb4,ddb4);
-		gtmc4 = new GoToMeasuringChart(curDir+"/pic/back.png",cmb4,dataseries4,4);
-
-		setConstraints(panel,gridbag,cEXP4,0,0,0,row+0,1,1);
-		setConstraints(panel,gridbag,cbase4,10,100,GridBagConstraints.RELATIVE,row+0,1,7);
-		setConstraints(panel,gridbag,cchart4,100,50,GridBagConstraints.RELATIVE,row+0,4,7);
-		setConstraints(panel,gridbag,cmb4,0,0,0,row+1,1,1);
-		setConstraints(panel,gridbag,csb4,0,0,0,row+2,1,1);
-		setConstraints(panel,gridbag,gtmc4,0,0,0,row+3,1,1);
-		setConstraints(panel,gridbag,dub4,0,0,0,row+4,1,1);
-		setConstraints(panel,gridbag,ddb4,0,0,0,row+5,1,1);
-		setConstraints(panel,gridbag,cbase4_1,0,0,0,row+6,1,1);
-		setConstraints(panel,gridbag,spacer4,10,50,0,row+7,GridBagConstraints.REMAINDER,1);
-		row=row+8;
 		
 		
 		//Fifth line
@@ -388,9 +304,6 @@ public class BLV extends JFrame {
 	
 	private void refreshExpNo(){
 		cEXP1.refresh();
-		cEXP2.refresh();
-		cEXP3.refresh();
-		cEXP4.refresh();
 	}
 	
 //	private void filecopy(String srcPath, String destPath) 
@@ -606,9 +519,6 @@ public class BLV extends JFrame {
 				        JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 				  if(retValue ==0) {
 					  if(cp1!=null) cp1.portfastclose();
-					  if(cp2!=null) cp2.portfastclose();
-					  if(cp3!=null) cp3.portfastclose();
-					  if(cp4!=null) cp4.portfastclose();
 					  if(ct!=null) ct.portfastclose();
 					  refreshExpNo();
 					  System.exit(0);
@@ -629,10 +539,10 @@ public class BLV extends JFrame {
 		else curDir = "/Applications/BLV";
 	}
 	
-	private void setMachineNo(){
-		MachineNoReader mnr = new MachineNoReader();
-		this.MACHINENO = mnr.getMachineNo();
-	}
+//	private void setMachineNo(){
+//		MachineNoReader mnr = new MachineNoReader();
+//		this.MACHINENO = mnr.getMachineNo();
+//	}
 	
 //	private void setDisplayNo(){
 //		displayNo1 = new DisplayNo(expno1);
@@ -651,9 +561,6 @@ public class BLV extends JFrame {
 	
 	private void setChartPanel(){
 		cchart1 = new ChartPanel(chart1);
-		cchart2 = new ChartPanel(chart2);
-		cchart3 = new ChartPanel(chart3);
-		cchart4 = new ChartPanel(chart4);
 		cchart5 = new ChartPanel(chart5);
 		
 	}
